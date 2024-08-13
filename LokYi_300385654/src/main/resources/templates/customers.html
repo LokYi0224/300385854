@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" xmlns:th="http://www.thymleaf.org">
+    <title>Title</title>
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-J3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.3/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+    <title>Seat Reservation System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            text-align: center;
+        }
+        table {
+            width: 50%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        .center {
+            text-align: center;
+        }
+        .form-group {
+            margin: 20px auto;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        input[type="text"], input[type="submit"] {
+            padding: 10px;
+            margin: 5px 0;
+        }
+        .error {
+            color: red;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div style="background-color:darkgreen">
+<h1>Seat Reservation System</h1>
+<p class="center">Date: <span th:text="${currentDate}"></span></p>
+
+<table>
+    <tr>
+        <th>A</th>
+        <th>B</th>
+        <th>C</th>
+        <th>D</th>
+        <th>E</th>
+    </tr>
+    <tr>
+        <td th:text="${customerSeats.get('1A') ?: '1A'}"></td>
+        <td th:text="${customerSeats.get('1B') ?: '1B'}"></td>
+        <td th:text="${customerSeats.get('1C') ?: '1C'}"></td>
+        <td th:text="${customerSeats.get('1D') ?: '1D'}"></td>
+        <td th:text="${customerSeats.get('1E') ?: '1E'}"></td>
+    </tr>
+    <tr>
+        <td th:text="${customerSeats.get('2A') ?: '2A'}"></td>
+        <td th:text="${customerSeats.get('2B') ?: '2B'}"></td>
+        <td th:text="${customerSeats.get('2C') ?: '2C'}"></td>
+        <td th:text="${customerSeats.get('2D') ?: '2D'}"></td>
+        <td th:text="${customerSeats.get('2E') ?: '2E'}"></td>
+    </tr>
+    <tr>
+        <td th:text="${customerSeats.get('3A') ?: '3A'}"></td>
+        <td th:text="${customerSeats.get('3B') ?: '3B'}"></td>
+        <td th:text="${customerSeats.get('3C') ?: '3C'}"></td>
+        <td th:text="${customerSeats.get('3D') ?: '3D'}"></td>
+        <td th:text="${customerSeats.get('3E') ?: '3E'}"></td>
+    </tr>
+    <tr>
+        <td th:text="${customerSeats.get('4A') ?: '4A'}"></td>
+        <td th:text="${customerSeats.get('4B') ?: '4B'}"></td>
+        <td th:text="${customerSeats.get('4C') ?: '4C'}"></td>
+        <td th:text="${customerSeats.get('4D') ?: '4D'}"></td>
+        <td th:text="${customerSeats.get('4E') ?: '4E'}"></td>
+    </tr>
+
+</table>
+
+<p class="center">Remaining Seats: <span th:text="${remainingSeats}"></span></p>
+
+<div th:if="${errorMessage}" class="error" th:text="${errorMessage}"></div>
+
+<form class="form-group" th:action="@{/reserve}" method="post">
+    <label for="seat-code">Enter Seat Code:</label>
+    <input class="form-control" type="text" id="seat-code" name="seatno" placeholder="e.g., 1A" required>
+
+    <label for="customer-name">Enter Customer Name:</label>
+    <input class="form-control" type="text" id="customer-name" name="name" placeholder="Customer Name" required>
+
+    <label for="transaction-data">Enter Transaction Data:</label>
+    <input class="form-control" type="date" id="transaction-data" name="tdate" placeholder="Transaction Data" required>
+
+    <input type="submit" class="btn-primary" value="Reserve Seat">
+</form>
+</div>
+
+<div style="background-color:black; padding: 20px; margin-top: 20px;">
+    <h2 class="center">Transaction Details</h2>
+    <table style="color: white;">
+        <thead>
+        <tr>
+            <th>Transaction ID</th>
+            <th>Date</th>
+            <th>Seat Number</th>
+            <th>Customer Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${customerList}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${#dates.format(p.tdate, 'yyyy-MM-dd')}"></td>
+            <td th:text="${p.seatno}"></td>
+            <td th:text="${p.name}"></td>
+            <td>
+                <a class="btn btn-primary" th:href="@{editCustomers(id=${p.id})}">
+                    Edit</a>
+            </td>
+            <td>
+                <a class="btn btn-warning" onclick="return confirm('Are you sure you want to delete the record ?')" th:href="@{delete(id=${p.id})}">
+                    Delete
+                </a>
+            </td>
+        </tr>
+        <tr th:if="${customerList.isEmpty()}">
+            <td colspan="4">No records found</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+</body>
+</html>
